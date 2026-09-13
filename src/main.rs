@@ -1,5 +1,5 @@
 use winit::application::ApplicationHandler;
-use winit::event_loop::{ActiveEventLoop, EventLoop};
+use winit::event_loop::{ActiveEventLoop, EventLoop, ControlFlow};
 use winit::event::WindowEvent;
 use winit::window::{Window, WindowId, WindowAttributes};
 
@@ -33,6 +33,9 @@ impl ApplicationHandler for App {
             WindowEvent::RedrawRequested => {
                 self.window.as_ref().unwrap().request_redraw();
             },
+            WindowEvent::KeyboardInput {event, .. } => {
+                println!("Keyboard event: {:?}", event);
+            },
             _ => (),
         }
     }
@@ -40,6 +43,8 @@ impl ApplicationHandler for App {
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     let event_loop = EventLoop::new().unwrap();
+
+    event_loop.set_control_flow(ControlFlow::Wait);
 
     event_loop.run_app(App::default())?;
 

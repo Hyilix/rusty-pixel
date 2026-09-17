@@ -135,8 +135,16 @@ impl Canvas {
 
         for i in 0..(width * height) {
             let (new_x, new_y) = from_index(i, width);
-            let (ratio_x, ratio_y): (f32, f32) = (new_x as f32 / width as f32, new_y as f32 / height as f32);
-            let (old_x, old_y): (u32, u32) = ((ratio_x * self.width as f32) as u32, (ratio_y * self.height as f32) as u32);
+            let (ratio_x, ratio_y): (f64, f64) = (
+                new_x as f64 / width as f64,
+                new_y as f64 / height as f64
+                );
+
+            let (old_x, old_y): (u32, u32) = (
+                ((ratio_x * self.width as f64).floor() as u32).min(self.width - 1),
+                ((ratio_y * self.height as f64).floor() as u32).min(self.height - 1),
+                );
+
             let old_index = flat_index(old_x, old_y, self.width);
 
             pixels[i as usize] = self.pixels[old_index];

@@ -8,8 +8,8 @@ use winit::event::WindowEvent;
 use winit::window::{Window, WindowId, WindowAttributes};
 use softbuffer::{Context, Surface};
 
-mod camera;
-mod canvas;
+pub mod camera;
+pub mod canvas;
 
 #[derive(Default)]
 pub struct App {
@@ -35,7 +35,12 @@ impl ApplicationHandler for App {
 
         self.window.as_ref().unwrap().request_redraw();
 
-        self.canvas = canvas::Canvas::default();
+        // self.canvas = canvas::Canvas::default();
+        self.canvas = canvas::Canvas::new(5, 5, 0xAA000000);
+        self.canvas.fill(0x00777777);
+        self.canvas.dither(0x00FFFFFF, 2);
+        self.canvas.scale_to(6, 6);
+        self.canvas.scale_to(120, 120);
     }
 
     fn window_event(

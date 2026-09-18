@@ -11,6 +11,7 @@ fn from_index(i: u32, w: u32) -> (u32, u32) {
     (i % w, i / w)
 }
 
+#[derive(Clone)]
 pub struct Canvas {
     width: u32,
     height: u32,
@@ -106,29 +107,16 @@ impl Canvas {
         }
     }
 
-    // Add a new color to the canvas every 'steps' pixels
-    pub fn dither(
-        &mut self,
-        color: u32,
-        steps: u32,
-    ) {
-        let mut current_steps = 0;
-        for pixel in self.pixels.iter_mut() {
-            current_steps += 1;
-
-            if current_steps % steps != 0 {
-                continue;
-            }
-
-            *pixel = color;
-        }
-    }
-
     // Scale image by factor
     pub fn scale_by(
         &mut self,
         factor: f32,
     ) {
+        // Check for irrelevant scaling
+        if factor == 1.0 {
+            return;
+        }
+
         let width: u32 = (self.width as f32 * factor) as u32;
         let height: u32 = (self.width as f32 * factor) as u32;
         let mut pixels: Vec<u32> = vec![0; (width * height) as usize];
@@ -161,6 +149,11 @@ impl Canvas {
         width: u32,
         height: u32,
     ) {
+        // Check for irrelevant scaling
+        if width == self.width && height == self.height {
+            return;
+        }
+
         let mut pixels: Vec<u32> = vec![0; (width * height) as usize];
 
         for i in 0..(width * height) {
@@ -184,16 +177,65 @@ impl Canvas {
         self.height = height;
         self.pixels = pixels;
     }
+
+    // Returns a rectangular zone from the canvas
+    pub fn get_zone(
+        &self,
+        area: &rectangle::Rectangle,
+    ) -> Self {
+        // Check if the zone is the entire area
+
+        println!("get_zone area dim: {}, {}, {}, {}", area.x, area.y, area.width, area.height);
+
+        if area.x == 0 && area.y == 0 &&
+            area.width >= self.width && area.height >= self.height {
+            return self.clone();
+        }
+
+        let mut pixels: Vec<u32> = vec![0xFF000000; (area.width * area.height) as usize];
+
+        for y in 0..area.height {
+            for x in 0..area.width {
+                let dy = y + area.y;
+                let dx = x + area.x;
+
+                // Check if out of bounds
+                if dx >= self.width || dy >= self.height {
+                    continue;
+                }
+
+                let pixels_index = flat_index(x, y, area.width);
+                let canvas_index = flat_index(dx, dy, self.width);
+
+                pixels[pixels_index] = self.pixels[canvas_index];
+            }
+        }
+
+        Self {
+            width: area.width,
+            height: area.height,
+            pixels,
+        }
+    }
 }
 
 // Specific methods
 impl Canvas {
-    // Convert canvas content to screen size
-    pub fn canvas_to_screen(&self, width: u32, height: u32) -> Vec<u32> {
-        let mut temp_canvas: Canvas = Canvas::new(width, height, 0xFF000000);
+    // Add a new color to the canvas every 'steps' pixels
+    pub fn dither(
+        &mut self,
+        color: u32,
+        steps: u32,
+    ) {
+        let mut current_steps = 0;
+        for pixel in self.pixels.iter_mut() {
+            current_steps += 1;
 
-        temp_canvas.blit(self, (100, 100));
+            if current_steps % steps != 0 {
+                continue;
+            }
 
-        temp_canvas.into_pixels()
+            *pixel = color;
+        }
     }
 }

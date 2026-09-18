@@ -8,8 +8,8 @@ use winit::event::WindowEvent;
 use winit::window::{Window, WindowId, WindowAttributes};
 use softbuffer::{Context, Surface};
 
-pub mod camera;
-pub mod canvas;
+use crate::render::canvas;
+use crate::render::camera;
 
 #[derive(Default)]
 pub struct App {
@@ -18,6 +18,7 @@ pub struct App {
     surface: Option<Surface<Rc<dyn Window>, Rc<dyn Window>>>,
 
     canvas: canvas::Canvas,
+    camera: camera::Camera,
 }
 
 impl ApplicationHandler for App {
@@ -35,12 +36,23 @@ impl ApplicationHandler for App {
 
         self.window.as_ref().unwrap().request_redraw();
 
+        // NOTE: Canvas testing
         // self.canvas = canvas::Canvas::default();
-        self.canvas = canvas::Canvas::new(5, 5, 0xAA000000);
-        self.canvas.fill(0x00777777);
-        self.canvas.dither(0x00FFFFFF, 2);
-        self.canvas.scale_to(6, 6);
-        self.canvas.scale_to(120, 120);
+        // self.canvas = canvas::Canvas::new(5, 5, 0xAA000000);
+        // self.canvas.fill(0x00777777);
+        // self.canvas.dither(0x00FFFFFF, 2);
+        // self.canvas.scale_to(120, 120);
+
+        let (width, height) = {
+            let size = self.window.as_ref().unwrap().surface_size();
+            (size.width, size.height)
+        };
+
+        self.canvas = canvas::Canvas::new(width, height, 0xFF000000);
+        self.camera = camera::Camera::new(width / 2 - width / 16, height / 2 - height / 16, width / 8, height / 8, 2f32);
+
+        // NOTE: Camera testing
+        self.camera.get_canvas_mut().fill(0x0000FF00);
     }
 
     fn window_event(
@@ -63,11 +75,14 @@ impl ApplicationHandler for App {
                     (size.width, size.height)
                 };
 
+                self.canvas.scale_to(width, height);
+                self.camera.present_to_screen(&mut self.canvas, (width, height));
+
                 let surface = self.surface.as_mut().unwrap();
                 surface.resize(NonZeroU32::new(width).unwrap(), NonZeroU32::new(height).unwrap()).unwrap();
 
                 let mut buffer = surface.buffer_mut().unwrap();
-                buffer.copy_from_slice(&self.canvas.canvas_to_screen(width, height));
+                buffer.copy_from_slice(self.canvas.get_pixels());
 
                 // for pixel in buffer.iter_mut() {
                 //     *pixel = 0x00000000;

@@ -11,6 +11,9 @@ use softbuffer::{Context, Surface};
 use crate::engine::canvas;
 use crate::render::camera;
 
+use crate::engine::geometry;
+use crate::engine::draw;
+
 #[derive(Default)]
 pub struct App {
     window: Option<Rc<dyn Window>>,
@@ -50,10 +53,16 @@ impl ApplicationHandler for App {
 
         self.canvas = canvas::Canvas::new(width, height, 0xFF000000);
         // NOTE: Arbitrary values for camera testing
-        self.camera = camera::Camera::new(width / 2 - width / 16, height / 2 - height / 16, width / 8, height / 8, 2f32);
+        // self.camera = camera::Camera::new(width / 2 - width / 16, height / 2 - height / 16, width / 8, height / 8, 1f32);
+        self.camera = camera::Camera::new(0, 0, width, height, 16f32);
+
+        let line_test = geometry::line::Line::new(0, 4, 7, 1);
 
         // NOTE: Camera testing
         self.camera.get_canvas_mut().fill(0x0000FF00);
+        // self.camera.get_canvas_mut().dither(0x00FF0000, 3);
+        self.camera.get_canvas_mut().dither(0x0000DD00, 2);
+        draw::line::simple(self.camera.get_canvas_mut(), &line_test, 0x00FF0000);
     }
 
     fn window_event(

@@ -77,6 +77,17 @@ impl Canvas {
         }
     }
 
+    // Draw a single point to the canvas
+    pub fn draw_point(
+        &mut self,
+        point: (i32, i32),
+        color: u32,
+    ) {
+        println!("Draw point: {} : {}", point.0, point.1);
+        let index = flat_index(point.0 as u32, point.1 as u32, self.width);
+        self.pixels[index] = color;
+    }
+
     // Fill entire canvas with a color
     pub fn fill(
         &mut self,
@@ -88,8 +99,8 @@ impl Canvas {
     // Fill a rectangle portion of the canvas
     pub fn fill_rect(
         &mut self,
+        rect: &rectangle::Rectangle,
         color: u32,
-        rect: rectangle::Rectangle,
     ) {
         for y in 0..rect.height {
             for x in 0..rect.width {
@@ -189,6 +200,7 @@ impl Canvas {
 
         if area.x == 0 && area.y == 0 &&
             area.width >= self.width && area.height >= self.height {
+            println!("return a clone");
             return self.clone();
         }
 

@@ -8,7 +8,7 @@ use winit::event::WindowEvent;
 use winit::window::{Window, WindowId, WindowAttributes};
 use softbuffer::{Context, Surface};
 
-use crate::render::canvas;
+use crate::engine::canvas;
 use crate::render::camera;
 
 #[derive(Default)]
@@ -49,6 +49,7 @@ impl ApplicationHandler for App {
         };
 
         self.canvas = canvas::Canvas::new(width, height, 0xFF000000);
+        // NOTE: Arbitrary values for camera testing
         self.camera = camera::Camera::new(width / 2 - width / 16, height / 2 - height / 16, width / 8, height / 8, 2f32);
 
         // NOTE: Camera testing

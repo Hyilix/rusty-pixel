@@ -1,5 +1,5 @@
 // Used to store information about the pixels
-use crate::geometry::rectangle;
+use crate::engine::geometry::rectangle;
 
 #[inline]
 fn flat_index(x: u32, y: u32, w: u32) -> usize {

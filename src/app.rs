@@ -57,12 +57,15 @@ impl ApplicationHandler for App {
         self.camera = camera::Camera::new(0, 0, width, height, 16f32);
 
         let line_test = geometry::line::Line::new(0, 4, 7, 1);
+        let rect_test = geometry::rectangle::Rectangle::new(0, 0, 5, 7);
 
         // NOTE: Camera testing
-        self.camera.get_canvas_mut().fill(0x0000FF00);
-        // self.camera.get_canvas_mut().dither(0x00FF0000, 3);
-        self.camera.get_canvas_mut().dither(0x0000DD00, 2);
-        draw::line::simple(self.camera.get_canvas_mut(), &line_test, 0x00FF0000);
+        self.camera.get_canvas_mut().fill(0x00AAAAAA);
+
+        self.camera.get_canvas_mut().checkerboard(0x00DDDDDD);
+
+        // draw::line::simple(self.camera.get_canvas_mut(), &line_test, 0x00FF0000);
+        // draw::rectangle::filled(self.camera.get_canvas_mut(), &rect_test, 0x00FF0000);
     }
 
     fn window_event(

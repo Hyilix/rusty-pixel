@@ -239,11 +239,31 @@ impl Canvas {
         color: u32,
         steps: u32,
     ) {
-        let mut current_steps = 0;
-        for pixel in self.pixels.iter_mut() {
-            current_steps += 1;
+        for (current_steps, pixel) in self.pixels.iter_mut().enumerate() {
+            if !current_steps.is_multiple_of(steps as usize) {
+                continue;
+            }
 
-            if current_steps % steps != 0 {
+            *pixel = color;
+        }
+    }
+
+    // Adds pixels to the surface to create a checkerboard pattern
+    pub fn checkerboard(
+        &mut self,
+        color: u32,
+    ) {
+        if self.width % 2 == 1 {
+            self.dither(color, 2);
+            return;
+        }
+        let mut place: bool = false;
+        for (current_steps, pixel) in self.pixels.iter_mut().enumerate() {
+            if !current_steps.is_multiple_of(self.width as usize) {
+                place = !place;
+            }
+
+            if !place {
                 continue;
             }
 

@@ -1,6 +1,6 @@
 pub struct Circle {
-    pub x: u32,
-    pub y: u32,
+    pub x: i32,
+    pub y: i32,
     pub radius: u32,
 }
 
@@ -11,7 +11,7 @@ impl Default for Circle {
 }
 
 impl Circle {
-    pub fn new(x: u32, y: u32, radius: u32) -> Self {
+    pub fn new(x: i32, y: i32, radius: u32) -> Self {
         Self {x, y, radius}
     }
 }

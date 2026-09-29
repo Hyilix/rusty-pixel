@@ -21,7 +21,7 @@ pub struct Canvas {
 impl Default for Canvas {
     // Default canvas implementation with some arbitrary values used
     fn default() -> Self {
-        Self::new(8, 8, 0xFF000000)
+        Self::new(16, 16, 0xFF000000)
     }
 }
 

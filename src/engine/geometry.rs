@@ -1,6 +1,8 @@
+pub mod point;
 pub mod rectangle;
 pub mod circle;
 pub mod line;
+pub mod triangle;
 
 #[inline]
 pub fn p2p_distance(x_start: i32, y_start: i32, x_end: i32, y_end: i32) -> f32 {

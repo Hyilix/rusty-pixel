@@ -12,6 +12,7 @@ use crate::engine::canvas;
 use crate::render::camera;
 
 use crate::engine::geometry;
+use geometry::{triangle::Triangle, point::Point};
 use crate::engine::draw;
 
 #[derive(Default)]
@@ -59,6 +60,11 @@ impl ApplicationHandler for App {
         let line_test = geometry::line::Line::new(0, 4, 7, 1);
         let rect_test = geometry::rectangle::Rectangle::new(0, 0, 5, 7);
         let circle_test = geometry::circle::Circle::new(8, 8, 4);
+        let trig_test = Triangle::new(
+            Point::pair_to_point((0, 0)),
+            Point::pair_to_point((5, 15)),
+            Point::pair_to_point((12, 3))
+        );
 
         // NOTE: Camera testing
         self.camera.get_canvas_mut().fill(0x00AAAAAA);
@@ -67,7 +73,8 @@ impl ApplicationHandler for App {
 
         // draw::line::simple(self.camera.get_canvas_mut(), &line_test, 0x00FF0000);
         // draw::rectangle::filled(self.camera.get_canvas_mut(), &rect_test, 0x00FF0000);
-        draw::circle::filled(self.camera.get_canvas_mut(), &circle_test, 0x00FF0000);
+        // draw::circle::filled(self.camera.get_canvas_mut(), &circle_test, 0x00FF0000);
+        draw::triangle::filled(self.camera.get_canvas_mut(), &trig_test, 0x00FF0000);
     }
 
     fn window_event(
